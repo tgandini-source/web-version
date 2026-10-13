@@ -371,16 +371,60 @@
     </header>
 
     <nav class="index-strip" aria-label="Índice de consejos">
-      <a class="index-link" href="#intento">Intento</a><a class="index-link" href="#carlos-2">Carlos 2</a>
+      <a class="index-link" href="#intento-2">Intento 2</a><a class="index-link" href="#intento">Intento</a><a class="index-link" href="#carlos-2">Carlos 2</a>
     </nav>
 
     <div class="feed-header">
       <h2 class="feed-title">Cartelera médica</h2>
-      <div class="feed-counter">2 consejos activos</div>
+      <div class="feed-counter">3 consejos activos</div>
     </div>
 
     <main>
       
+      <article id="intento-2" class="feed-card" data-card="intento-2">
+        <div class="card-kicker">
+          <span class="kicker-tag"> Aletología • Dr. Pingu</span>
+        </div>
+        <div class="card-header">
+          <div>
+            <span class="eyebrow">Consejo de salud // 12/10/2026</span>
+            <h2>Intento 2</h2>
+          </div>
+          <div class="share-row">
+            <button type="button" class="share-btn" data-share="facebook" data-title="Intento%202">Facebook</button>
+            <button type="button" class="share-btn" data-share="whatsapp" data-title="Intento%202">WhatsApp</button>
+            <button type="button" class="share-btn" data-share="link" data-title="Intento%202">Copiar enlace</button>
+          </div>
+        </div>
+
+        <div class="media-grid">
+          <div class="video-panel">
+            <video controls poster="intento-2/imagen_intento-2.jpg" preload="metadata">
+              <source src="intento-2/intento-2.mp4" type="video/mp4" />
+              Tu navegador no soporta video HTML5.
+            </video>
+          </div>
+
+          <div class="side-panel">
+            <div class="audio-box">
+              <div class="box-title">Audio del consejo</div>
+              <audio controls preload="metadata">
+                <source src="intento-2/audio_intento-2.wav" type="audio/wav" />
+                Tu navegador no soporta audio HTML5.
+              </audio>
+            </div>
+
+            <div class="script-box">
+              <div class="box-title">Guión</div>
+              <div class="script-text">Intento 2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-box">“intento-2”</div>
+      </article>
+    
+
       <article id="intento" class="feed-card" data-card="intento">
         <div class="card-kicker">
           <span class="kicker-tag"> Aletología • Dr. Pingu</span>
@@ -477,10 +521,15 @@
       document.querySelectorAll('[data-theme-button]').forEach((button) => {
         button.classList.toggle('active', button.getAttribute('data-theme-button') === theme);
       });
-      localStorage.setItem('gesundheitstafel-theme', theme);
+      try {
+        localStorage.setItem('gesundheitstafel-theme', theme);
+      } catch (error) {}
     };
 
-    const storedTheme = localStorage.getItem('gesundheitstafel-theme') || 'dark';
+    let storedTheme = 'dark';
+    try {
+      storedTheme = localStorage.getItem('gesundheitstafel-theme') || 'dark';
+    } catch (error) {}
     updateTheme(storedTheme);
 
     document.querySelectorAll('[data-theme-button]').forEach((button) => {
@@ -493,21 +542,21 @@
       const baseLink = window.location.href.split('#')[0];
       button.addEventListener('click', async () => {
         const text = decodeURIComponent(title || 'Consejo médico');
+        const card = button.closest('[data-card]');
+        const link = card && card.id ? baseLink + '#' + encodeURIComponent(card.id) : baseLink;
         if (shareType === 'facebook') {
-          const url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(baseLink);
+          const url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link);
           window.open(url, '_blank', 'noopener,noreferrer');
           return;
         }
         if (shareType === 'whatsapp') {
-          const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '
-
-' + baseLink);
+          const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n\n' + link);
           window.open(url, '_blank', 'noopener,noreferrer');
           return;
         }
         if (shareType === 'link') {
           try {
-            await navigator.clipboard.writeText(baseLink);
+            await navigator.clipboard.writeText(link);
             const oldText = button.textContent;
             button.textContent = 'Enlace copiado';
             setTimeout(() => { button.textContent = oldText; }, 1400);
