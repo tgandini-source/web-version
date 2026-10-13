@@ -1,54 +1,371 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gesundheitstafel — Dr. Pingu</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background-color: #191300; color: #ebdbb2; font-family: system-ui, -apple-system, sans-serif; }
+    :root {
+      --bg: #191300;
+      --panel: #211a05;
+      --panel-soft: #2b2414;
+      --card: #201a08;
+      --border: rgba(166, 139, 124, 0.35);
+      --text: #ebdbb2;
+      --muted: #d7c5a8;
+      --primary: #fe8019;
+      --secondary: #a9b665;
+      --accent: #83a598;
+      --shadow: rgba(0,0,0,0.22);
+    }
+
+    body[data-theme="light"] {
+      --bg: #f7f1e4;
+      --panel: #fffaf0;
+      --panel-soft: #f0e9dc;
+      --card: #fffaf2;
+      --border: rgba(103, 98, 87, 0.22);
+      --text: #2d241a;
+      --muted: #5a4d41;
+      --primary: #c85a00;
+      --secondary: #4d7a32;
+      --accent: #1b5f88;
+      --shadow: rgba(78, 61, 42, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .page-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px 56px;
+    }
+    .doctor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 24px 28px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: 0 18px 32px var(--shadow);
+      margin-bottom: 28px;
+    }
+    .doctor-data {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .doctor-photo {
+      width: 104px;
+      height: 104px;
+      border-radius: 24px;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      background: var(--panel-soft);
+    }
+    .eyebrow {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      font-weight: 700;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    .doctor-header h1 {
+      margin: 8px 0 2px;
+      font-size: clamp(2rem, 2vw + 1rem, 3rem);
+      line-height: 1.1;
+      font-weight: 800;
+    }
+    .doctor-meta {
+      color: var(--primary);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-weight: 700;
+    }
+    .doctor-bio {
+      margin-top: 12px;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .theme-switch {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px;
+    }
+    .theme-switch button {
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    .theme-switch button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 14px 0 18px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .feed-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+    .feed-counter {
+      color: var(--muted);
+      font-size: 12px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .feed-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: 0 18px 36px var(--shadow);
+      margin-bottom: 24px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .card-header h2 {
+      margin: 10px 0 0;
+      font-size: clamp(1.8rem, 1.5vw + 1rem, 2.5rem);
+      line-height: 1.2;
+      font-weight: 800;
+    }
+    .share-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .share-btn {
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    .media-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 18px;
+    }
+    .video-panel,
+    .side-panel {
+      min-width: 0;
+    }
+    video, audio {
+      width: 100%;
+      border-radius: 18px;
+      display: block;
+    }
+    video {
+      aspect-ratio: 16 / 9;
+      background: #000;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+    .audio-box,
+    .script-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .box-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--primary);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .script-text {
+      white-space: pre-wrap;
+      line-height: 1.75;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .legend-box {
+      margin-top: 18px;
+      background: linear-gradient(90deg, rgba(254,128,25,0.10), rgba(255,255,255,0.02));
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-style: italic;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 52px 18px;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      background: var(--panel);
+      border-radius: 22px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    @media (max-width: 820px) {
+      .doctor-header { flex-direction: column; align-items: flex-start; }
+      .media-grid { grid-template-columns: 1fr; }
+      .share-row { justify-content: flex-start; }
+      .doctor-data { align-items: flex-start; }
+    }
   </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8">
-  <div class="max-w-4xl mx-auto">
-    <!-- Header Doctor Profile -->
-    <header class="bg-[#211a05] border border-[#a68b7c]/30 rounded-2xl p-6 shadow-2xl mb-8 flex flex-col sm:flex-row items-center gap-6">
-      <img src="perfil_medico.png" alt="Dr. Pingu" class="w-24 h-24 rounded-2xl object-cover border-2 border-[#fe8019] shadow-lg">
-      <div class="flex flex-col text-center sm:text-left">
-        <span class="text-xs uppercase font-mono text-[#a1d48e] font-bold">Consejos de  Aletología dados por</span>
-        <h1 class="text-3xl font-bold text-[#f2e1b8] mt-1">Dr. Pingu</h1>
-        <span class="text-xs text-[#fe8019] font-mono mt-0.5">Matrícula: MP 12345 / MN 67890</span>
-        <p class="text-xs text-[#dfc0b0] mt-2 max-w-xl">Médico Aletologo con más de 40 años de trayectoria clínica dedicado a la divulgación de pautas de cuidado aviar y salud comunitaria.</p>
+<body data-theme="dark">
+  <div class="page-shell">
+    <header class="doctor-header">
+      <div class="doctor-data">
+        <img class="doctor-photo" src="perfil_medico.png" alt="Dr. Pingu" />
+        <div>
+          <span class="eyebrow">Consejos de  Aletología dados por</span>
+          <h1>Dr. Pingu</h1>
+          <div class="doctor-meta">Matrícula: MP 12345 / MN 67890</div>
+          <p class="doctor-bio">Médico Aletologo con más de 40 años de trayectoria clínica dedicado a la divulgación de pautas de cuidado aviar y salud comunitaria.</p>
+        </div>
+      </div>
+      <div class="theme-switch" aria-label="Selector de tema">
+        <button type="button" class="active" data-theme-button="dark">Oscuro</button>
+        <button type="button" data-theme-button="light">Claro</button>
       </div>
     </header>
 
-    <!-- Cards List -->
+    <div class="feed-header">
+      <h2 class="feed-title">Cartelera médica</h2>
+      <div class="feed-counter">1 consejos activos</div>
+    </div>
+
     <main>
       
-    <article id="carlos" class="bg-[#211a05] text-[#ebdbb2] border border-[#a68b7c]/30 rounded-2xl p-6 shadow-xl mb-6">
-      <div class="mb-4">
-        <span class="text-xs uppercase font-mono text-[#fe8019] tracking-wider">CONSEJO MÉDICO // 12.10.2026</span>
-        <h2 class="text-2xl font-bold mt-1">Carlos</h2>
-      </div>
-      <div class="aspect-video w-full rounded-xl overflow-hidden bg-black mb-4">
-        <video controls poster="carlos/imagen_carlos.jpg" class="w-full h-full object-cover">
-          <source src="carlos/carlos.mp4" type="video/mp4">
-          Tu navegador no soporta video HTML5.
-        </video>
-      </div>
-      <div class="bg-[#181303] p-4 rounded-xl text-sm leading-relaxed whitespace-pre-wrap font-sans border border-[#3c3836]/40 mb-4">
-        Hola, mi nombre es Carlos, tengo 90 años y soy arquitecto
-      </div>
-      <div class="bg-[#2e240a] p-3 rounded-lg border-l-4 border-[#fe8019] text-xs font-semibold italic text-[#f2e1b8]">
-          "carlos"
+      <article id="carlos-2" class="feed-card" data-card="carlos-2">
+        <div class="card-header">
+          <div>
+            <span class="eyebrow">Consejo de salud // 12/10/2026</span>
+            <h2>Carlos 2</h2>
+          </div>
+          <div class="share-row">
+            <button class="share-btn" data-share="facebook" data-title="Carlos%202">Facebook</button>
+            <button class="share-btn" data-share="whatsapp" data-title="Carlos%202">WhatsApp</button>
+            <button class="share-btn" data-share="link" data-title="Carlos%202">Copiar enlace</button>
+          </div>
         </div>
-    </article>
-  
-    </main>
 
-    <footer class="text-center py-8 text-xs font-mono text-[#a89984] border-t border-[#3c3836]/40 mt-12">
-      Gesundheitstafel TIP © 2026 — Publicado automáticamente con GitHub Pages
-    </footer>
+        <div class="media-grid">
+          <div class="video-panel">
+            <video controls poster="carlos-2/imagen_carlos-2.jpg" preload="metadata">
+              <source src="carlos-2/carlos-2.mp4" type="video/mp4" />
+              Tu navegador no soporta video HTML5.
+            </video>
+          </div>
+
+          <div class="side-panel">
+            <div class="audio-box">
+              <div class="box-title">Audio del consejo</div>
+              <audio controls preload="metadata">
+                <source src="carlos-2/audio_carlos-2.wav" type="audio/wav" />
+                Tu navegador no soporta audio HTML5.
+              </audio>
+            </div>
+
+            <div class="script-box">
+              <div class="box-title">Guión</div>
+              <div class="script-text">Tengo 90 años y soy arquitecto</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-box">“carlos-2”</div>
+      </article>
+    
+    </main>
   </div>
+
+  <script>
+    const updateTheme = (theme) => {
+      document.body.setAttribute('data-theme', theme);
+      document.querySelectorAll('[data-theme-button]').forEach((button) => {
+        button.classList.toggle('active', button.getAttribute('data-theme-button') === theme);
+      });
+      localStorage.setItem('gesundheitstafel-theme', theme);
+    };
+
+    const storedTheme = localStorage.getItem('gesundheitstafel-theme') || 'dark';
+    updateTheme(storedTheme);
+
+    document.querySelectorAll('[data-theme-button]').forEach((button) => {
+      button.addEventListener('click', () => updateTheme(button.getAttribute('data-theme-button')));
+    });
+
+    document.querySelectorAll('[data-share]').forEach((button) => {
+      const shareType = button.getAttribute('data-share');
+      const title = button.getAttribute('data-title');
+      const link = window.location.href.split('#')[0];
+      button.addEventListener('click', () => {
+        const text = decodeURIComponent(title || 'Consejo médico');
+        if (shareType === 'facebook') {
+          const url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link);
+          window.open(url, '_blank');
+        }
+        if (shareType === 'whatsapp') {
+          const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '
+
+' + link);
+          window.open(url, '_blank');
+        }
+        if (shareType === 'link') {
+          navigator.clipboard.writeText(link).catch(() => {});
+          button.textContent = 'Enlace copiado';
+          setTimeout(() => { button.textContent = 'Copiar enlace'; }, 1400);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
